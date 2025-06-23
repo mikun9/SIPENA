@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulir Permintaan ATK</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Formulir Permintaan ATK</h2>
+    <form id="atkForm">
+      <label for="nama">Nama</label>
+      <input type="text" id="nama" name="nama" required />
+
+      <label for="unit">Unit</label>
+      <select id="unit" name="unit" required>
+        <option value="">-- Pilih Unit --</option>
+        <option value="Kepaniteraan">Kepaniteraan</option>
+        <option value="Kesekretariatan">Kesekretariatan</option>
+      </select>
+
+      <label for="keperluan">Keperluan</label>
+      <textarea id="keperluan" name="keperluan" rows="4" required></textarea>
+
+      <button type="submit">Kirim</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("atkForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const nama = document.getElementById("nama").value.trim();
+      const unit = document.getElementById("unit").value;
+      const keperluan = document.getElementById("keperluan").value.trim();
+
+      if (!nama || !unit || !keperluan) {
+        alert("Harap isi semua bidang sebelum mengirim.");
+        return;
+      }
+
+      const data = { nama, unit, keperluan };
+
+      // URL Web App milik user
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxyk8svCEKGnWfj1q-tECLNB5hCmNbnqfhNsMpe2y2y3QE0ISd_yLAVcFPGoxTBCKl3/exec";
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then(response => response.json())
+        .then(result => {
+          alert("Data berhasil dikirim. Anda akan dialihkan ke WhatsApp...");
+          const nomorWA = "6281290988061"; // Ganti sesuai kebutuhan
+          const pesan = `Halo, saya ${nama} dari unit ${unit} ingin mengajukan permintaan ATK:\n${keperluan}`;
+          const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+          window.location.href = urlWA;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Gagal menyimpan data. Silakan cek koneksi internet atau hubungi admin.");
+        });
+    });
+  </script>
+
+</body>
+</html>
